@@ -2,7 +2,7 @@ import { Collection, Db, MongoClient } from 'mongodb';
 
 import { R6Class, Database, R6Collection } from './database';
 
-export class MongoDatabase implements Database {
+export class MongoDatabase extends Database {
 
   private client: MongoClient;
   private db: Db;
@@ -14,6 +14,7 @@ export class MongoDatabase implements Database {
   constructor(
     private readonly url: string
   ) {
+    super();
     this.init();
   }
 
