@@ -11,29 +11,46 @@ import { PlayerUsername } from '../models/player-username';
 import { ServerStatus } from '../models/server-status';
 import { PlayerDoc } from '../models/player-doc';
 
+export interface R6ServiceOptions {
+  caching?: boolean,
+  expiration?: number,
+  cacheService?: CacheService,
+  database?: Database
+}
+
 export class R6Service {
 
   private caching = false;
   private expiration = 60 * 1000; // 1 minute
+  private cacheService: CacheService;
+  private database: Database;
   private readonly r6Api: any;
 
   constructor(
     private readonly email: String,
     private readonly password: String,
-    private readonly cacheService: CacheService,
-    private readonly database: Database,
-    caching?: boolean,
-    expiration?: number
+    private readonly options?: R6ServiceOptions
   ) {
-    if (expiration != null) {
-      this.expiration = expiration;
-    }
-
-    if(caching != null) {
-      this.caching = caching;
-    }
-
+    this.setOptions();
     this.r6Api = R6API(this.email, this.password);
+  }
+
+  private setOptions() {
+    if(this.options.caching != null) {
+      this.caching = this.options.caching;
+    }
+
+    if(this.options.expiration != null) {
+      this.expiration = this.options.expiration;
+    }
+
+    if(this.options.cacheService != null) {
+      this.cacheService = this.options.cacheService;
+    }
+
+    if(this.options.database != null) {
+      this.database = this.options.database;
+    }
   }
 
   private async getCachedData(id: string, collection: R6Collection,
