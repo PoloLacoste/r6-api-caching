@@ -13,20 +13,33 @@ import { PlayerDoc } from '../models/player-doc';
 
 export class R6Service {
 
-  private static DATA_EXPIRATION = 60 * 1000; // 1 minute
-  private readonly r6Api = new R6API(process.env.EMAIL, process.env.PASSWORD);
+  private caching = false;
+  private expiration = 60 * 1000; // 1 minute
+  private readonly r6Api: any;
 
-  constructor(private readonly cacheService: CacheService,
-    private readonly database: Database) {
-    if (process.env.DATA_EXPIRATION != null) {
-      R6Service.DATA_EXPIRATION = parseInt(process.env.DATA_EXPIRATION);
+  constructor(
+    private readonly email: String,
+    private readonly password: String,
+    private readonly cacheService: CacheService,
+    private readonly database: Database,
+    caching?: boolean,
+    expiration?: number
+  ) {
+    if (expiration != null) {
+      this.expiration = expiration;
     }
+
+    if(caching != null) {
+      this.caching = caching;
+    }
+
+    this.r6Api = R6API(this.email, this.password);
   }
 
   private async getCachedData(id: string, collection: R6Collection,
     getData: () => Promise<any | null>): Promise<any | null> {
 
-    if (!+process.env.ENABLE_CACHING || !this.cacheService.isOnline() ||
+    if (this.caching || !this.cacheService.isOnline() ||
       !this.database.isOnline()) {
       return await getData();
     }
@@ -36,7 +49,7 @@ export class R6Service {
     const now = new Date().getTime();
     let cachedTimestamp = await this.cacheService.getExpiration(cacheId) ?? -1;
 
-    const notExpired = cachedTimestamp + R6Service.DATA_EXPIRATION > now;
+    const notExpired = cachedTimestamp + this.expiration > now;
 
     if (notExpired) {
       const result = await this.database.get(collection, id);
@@ -64,7 +77,7 @@ export class R6Service {
 
   async getId(platform: string, username: string): Promise<string> {
     const getId = (): Promise<string> => this.r6Api.getId(platform, username).then(el => el[0].id);
-    if (!+process.env.ENABLE_CACHING || !this.cacheService.isOnline()) {
+    if (this.caching || !this.cacheService.isOnline()) {
       return await getId();
     }
 

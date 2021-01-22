@@ -11,15 +11,15 @@ export class MongoDatabase implements Database {
 
   private online = true;
 
-  constructor() {
+  constructor(
+    private readonly url: string
+  ) {
     this.init();
   }
 
   async init(): Promise<void> {
-    let url = process.env.MONGO_URL;
-
     try {
-      this.client = await MongoClient.connect(url, {
+      this.client = await MongoClient.connect(this.url, {
         useUnifiedTopology: true,
         connectTimeoutMS: 4000,
       });

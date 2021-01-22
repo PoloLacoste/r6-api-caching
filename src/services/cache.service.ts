@@ -1,3 +1,4 @@
+import { Region } from './../models/player-rank';
 const redis = require("redis");
 import { promisify } from "util";
 
@@ -13,10 +14,12 @@ export class CacheService {
 
   private online = true;
 
-  constructor() {
+  constructor(
+    private readonly url: string
+  ) {
 
     const client = this.client = redis.createClient({
-      url: process.env.REDIS_URL,
+      url: this.url,
       disable_resubscribing: true
     });
 
