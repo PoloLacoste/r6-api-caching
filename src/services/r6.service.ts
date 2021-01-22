@@ -1,7 +1,7 @@
 const R6API = require('r6api.js');
 
 import { CacheService } from './cache.service';
-import { Database, R6Class, R6Collection } from '../databases/database';
+import { Database, R6Collection } from '../databases/database';
 
 import { PlayerLevel } from '../models/player-level';
 import { PlayerPlaytime } from '../models/player-playtime';
@@ -32,7 +32,7 @@ export class R6Service {
     private readonly options?: R6ServiceOptions
   ) {
     this.setOptions();
-    this.r6Api = R6API(this.email, this.password);
+    this.r6Api = new R6API(this.email, this.password);
   }
 
   private setOptions() {
