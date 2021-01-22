@@ -12,6 +12,9 @@ export class CacheService {
   private getUsernameIdAsync: any;
   private setUsernameIdAsync: any;
 
+  private getCustomAsync: any;
+  private setCustomAsync: any;
+
   private online = true;
 
   constructor(
@@ -37,6 +40,11 @@ export class CacheService {
     this.client.select('id', () => {
       this.getUsernameIdAsync = promisify(this.client.get).bind(this.client);
       this.setUsernameIdAsync = promisify(this.client.set).bind(this.client);
+    });
+
+    this.client.select('custom', () => {
+      this.getCustomAsync = promisify(this.client.get).bind(this.client);
+      this.setCustomAsync = promisify(this.client.set).bind(this.client);
     });
   }
 
@@ -79,6 +87,26 @@ export class CacheService {
   async setId(username: string, id: string): Promise<void> {
     try {
       await this.setUsernameIdAsync(username, id);
+    }
+    catch(e) {
+      console.log(e);
+    }
+  }
+
+  async getCustom(key: string): Promise<string> {
+    try {
+      return this.getCustomAsync(key) as string;
+    }
+    catch(e) {
+      console.log(e);
+    }
+
+    return null;
+  }
+
+  async setCustom(key: string, value: string): Promise<void> {
+    try {
+      await this.setCustomAsync(key, value);
     }
     catch(e) {
       console.log(e);
