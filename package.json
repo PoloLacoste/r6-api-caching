@@ -2,10 +2,12 @@
   "name": "r6-api-cacher",
   "version": "1.0.0",
   "description": "Rainbow Six Siege data caching",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "start": "tsc && node dist/index",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublish": "tsc"
   },
   "repository": {
     "type": "git",
