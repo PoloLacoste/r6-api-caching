@@ -1,5 +1,5 @@
 {
-  "name": "r6-api-cacher",
+  "name": "r6-cacher",
   "version": "1.0.0",
   "description": "Rainbow Six Siege data caching",
   "main": "dist/index.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PoloLacoste/r6-api-cacher.git"
+    "url": "git+https://github.com/PoloLacoste/r6-cacher.git"
   },
   "author": "PoloLacoste",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/PoloLacoste/r6-api-cacher/issues"
+    "url": "https://github.com/PoloLacoste/r6-cacher/issues"
   },
-  "homepage": "https://github.com/PoloLacoste/r6-api-cacher#readme",
+  "homepage": "https://github.com/PoloLacoste/r6-cacher#readme",
   "devDependencies": {
     "@types/node": "^14.14.22",
     "@typescript-eslint/eslint-plugin": "^4.14.0",
