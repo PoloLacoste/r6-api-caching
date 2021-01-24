@@ -56,7 +56,7 @@ export class R6Service {
   private async getCachedData(id: string, collection: R6Collection,
     getData: () => Promise<any | null>): Promise<any | null> {
 
-    if (this.caching || !this.cacheService.isOnline() ||
+    if (!this.caching || !this.cacheService.isOnline() ||
       !this.database.isOnline()) {
       return await getData();
     }
@@ -65,7 +65,6 @@ export class R6Service {
     const cacheId = `${id}_${collection}`;
     const now = new Date().getTime();
     let cachedTimestamp = await this.cacheService.getExpiration(cacheId) ?? -1;
-
     const notExpired = cachedTimestamp + this.expiration > now;
 
     if (notExpired) {
@@ -76,6 +75,8 @@ export class R6Service {
       cachedTimestamp = -1;
     }
 
+    console.log("expired");
+
     // caching if data is expired or not in the database
     let data = await getData();
     if (cachedTimestamp == -1) {
@@ -83,7 +84,7 @@ export class R6Service {
     } else {
       await this.database.update(collection, id, data);
     }
-    await this.cacheService.setExpiration(id, now);
+    await this.cacheService.setExpiration(cacheId, now);
     return data;
   }
 
@@ -94,7 +95,7 @@ export class R6Service {
 
   async getId(platform: string, username: string): Promise<string> {
     const getId = (): Promise<string> => this.r6Api.getId(platform, username).then(el => el[0].id);
-    if (this.caching || !this.cacheService.isOnline()) {
+    if (!this.caching || !this.cacheService.isOnline()) {
       return await getId();
     }
 
