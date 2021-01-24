@@ -36,19 +36,19 @@ export class R6Service {
   }
 
   private setOptions() {
-    if(this.options.caching != null) {
+    if(this.options?.caching != null) {
       this.caching = this.options.caching;
     }
 
-    if(this.options.expiration != null) {
+    if(this.options?.expiration != null) {
       this.expiration = this.options.expiration;
     }
 
-    if(this.options.cacheService != null) {
+    if(this.options?.cacheService != null) {
       this.cacheService = this.options.cacheService;
     }
 
-    if(this.options.database != null) {
+    if(this.options?.database != null) {
       this.database = this.options.database;
     }
   }
