@@ -75,8 +75,6 @@ export class R6Service {
       cachedTimestamp = -1;
     }
 
-    console.log("expired");
-
     // caching if data is expired or not in the database
     let data = await getData();
     if (cachedTimestamp == -1) {
