@@ -1,6 +1,6 @@
 # r6-api-caching
 
-Simple cacher around r6api.j using redis and mongodb.
+Simple cacher around [r6api.js](https://github.com/danielwerg/r6api.js) using redis and mongodb.
 
 [![NPM](https://nodei.co/npm/r6-api-caching.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/r6-api-caching/)
 
