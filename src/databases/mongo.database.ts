@@ -65,7 +65,7 @@ export class MongoDatabase extends Database {
 
   async update(name: R6Collection, id: string, data: R6Class): Promise<void> {
     await this.getCollection(name).replaceOne({
-      _id: id
+      id
     }, data);
   }
 
