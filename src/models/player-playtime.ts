@@ -1,7 +1,13 @@
 export class PlayerPlaytime {
-    id:        string;
-    general:   number;
-    ranked:    number;
-    casual:    number;
-    discovery: number;
+  id: string;
+  pvp: {
+    general: number;
+    ranked: number;
+    casual: number;
+    custom: number;
+    other: number;
+  };
+  pve: {
+    general: number;
+  }
 }

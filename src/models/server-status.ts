@@ -1,17 +1,11 @@
-export class PC {
-  "AppID ": string;
-  MDM: string;
-  SpaceID: string;
-  Category: string;
-  Name: string;
-  Platform: string;
-  Status: string;
-  Maintenance: string | null;
-  ImpactedFeatures: any[];
-}
-
 export class ServerStatus {
-  PC: PC;
-  PS4: PC;
-  XBOX: PC;
+  appId: string;
+  name: string;
+  spaceId: string;
+  mdm: string;
+  category: 'Instance';
+  platform: 'PC' | 'PS4' | 'XBOXONE' | 'PS5' | 'XBOX SERIES X';
+  status: 'Online' | 'Interrupted' | 'Degraded' | 'Maintenance';
+  maintenance: boolean | null;
+  impactedFeatures: string[];
 }

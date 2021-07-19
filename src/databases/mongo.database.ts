@@ -21,7 +21,6 @@ export class MongoDatabase extends Database {
   async init(): Promise<void> {
     try {
       this.client = await MongoClient.connect(this.url, {
-        useUnifiedTopology: true,
         connectTimeoutMS: 4000,
       });
 
@@ -54,7 +53,7 @@ export class MongoDatabase extends Database {
       id
     });
     delete data?._id;
-    return data;
+    return data as R6Class;
   }
 
   async insert(name: R6Collection, data: R6Class): Promise<void> {

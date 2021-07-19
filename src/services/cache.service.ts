@@ -1,6 +1,5 @@
-import { Region } from './../models/player-rank';
-const redis = require("redis");
-import { promisify } from "util";
+const redis = require('redis');
+import { promisify } from 'util';
 
 export class CacheService {
 

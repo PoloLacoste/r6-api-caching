@@ -1,16 +1,16 @@
-const R6API = require('r6api.js');
+import R6API from 'r6api.js';
+import { IGetRanks } from 'r6api.js/dist/methods/getRanks';
+import { IGetStats } from 'r6api.js/dist/methods/getStats';
+import { Platform, PlatformAll } from 'r6api.js/dist/typings';
 
 import { CacheService } from './cache.service';
 import { Database, R6Collection } from '../databases/database';
 
 import { PlayerLevel } from '../models/player-level';
 import { PlayerPlaytime } from '../models/player-playtime';
-import { PlayerRank } from '../models/player-rank';
-import { PlayerStats } from '../models/player-stats';
 import { PlayerUsername } from '../models/player-username';
 import { ServerStatus } from '../models/server-status';
 import { PlayerDoc } from '../models/player-doc';
-
 export interface R6ServiceOptions {
   caching?: boolean,
   expiration?: number,
@@ -24,15 +24,19 @@ export class R6Service {
   private expiration = 60 * 1000; // 1 minute
   private cacheService: CacheService;
   private database: Database;
-  private readonly r6Api: any;
+  private readonly r6Api: R6API;
 
   constructor(
-    private readonly email: String,
-    private readonly password: String,
+    private readonly email: string,
+    private readonly password: string,
     private readonly options?: R6ServiceOptions
   ) {
     this.setOptions();
-    this.r6Api = new R6API(this.email, this.password);
+    
+    this.r6Api = new R6API({
+      email: this.email, 
+      password: this.password
+    });
   }
 
   private setOptions() {
@@ -91,8 +95,8 @@ export class R6Service {
     return result.length > 0 ? result[0] : null;
   }
 
-  async getId(platform: string, username: string): Promise<string> {
-    const getId = (): Promise<string> => this.r6Api.getId(platform, username).then(el => el[0].id);
+  async getId(platform: PlatformAll, username: string): Promise<string> {
+    const getId = (): Promise<string> => this.r6Api.findByUsername(platform, username).then(el => el[0].id);
     if (!this.caching || !this.cacheService.isOnline()) {
       return await getId();
     }
@@ -108,64 +112,65 @@ export class R6Service {
   }
 
 
-  async getLevelById(platform: string, id: string): Promise<PlayerLevel | null> {
+  async getLevelById(platform: Platform, id: string): Promise<PlayerLevel | null> {
     return await this.getCachedData(id, R6Collection.level, async () => {
-      return this.getFirstResult(() => this.r6Api.getLevel(platform, id));
+      return this.getFirstResult(() => this.r6Api.getProgression(platform, id));
     });
   }
 
-  async getLevelByUsername(platform: string, username: string): Promise<PlayerLevel | null> {
+  async getLevelByUsername(platform: Platform, username: string): Promise<PlayerLevel | null> {
     const id = await this.getId(platform, username);
     return await this.getLevelById(platform, id);
   }
 
-  async getPlaytimeById(platform: string, id: string): Promise<PlayerPlaytime | null> {
+  async getPlaytimeById(platform: Platform, id: string): Promise<PlayerPlaytime | null> {
     return await this.getCachedData(id, R6Collection.playtime, async () => {
       return this.getFirstResult(() => this.r6Api.getPlaytime(platform, id));
     });
   }
 
-  async getPlaytimeByUsername(platform: string, username: string): Promise<PlayerPlaytime | null> {
+  async getPlaytimeByUsername(platform: Platform, username: string): Promise<PlayerPlaytime | null> {
     const id = await this.getId(platform, username);
     return await this.getPlaytimeById(platform, id);
   }
 
-  async getRankById(platform: string, id: string): Promise<PlayerRank | null> {
+  async getRankById(platform: Platform, id: string): Promise<IGetRanks | null> {
     return await this.getCachedData(id, R6Collection.rank, async () => {
-      return this.getFirstResult(() => this.r6Api.getRank(platform, id, {
-        seasons: 'all',
-        regions: ['emea']
+      return this.getFirstResult(() => this.r6Api.getRanks(platform, id, {
+        seasonIds: 'all',
+        boardIds: 'pvp_ranked',
+        regionIds: ['emea']
       }));
     });
   }
 
-  async getRankByUsername(platform: string, username: string): Promise<PlayerRank | null> {
+  async getRankByUsername(platform: Platform, username: string): Promise<IGetRanks | null> {
     const id = await this.getId(platform, username);
     return await this.getRankById(platform, id);
   }
 
-  async getStatsById(platform: string, id: string): Promise<PlayerStats> {
+  async getStatsById(platform: Platform, id: string): Promise<IGetStats> {
     return await this.getCachedData(id, R6Collection.stats, async () => {
       return this.r6Api.getStats(platform, id).then(el => el[0])
     });
   }
 
-  async getStatsByUsername(platform: string, username: string): Promise<PlayerStats> {
+  async getStatsByUsername(platform: Platform, username: string): Promise<IGetStats> {
     const id = await this.getId(platform, username);
     return await this.getStatsById(platform, id);
   }
 
-  async getServersStatus(): Promise<ServerStatus> {
+  async getServersStatus(): Promise<ServerStatus[]> {
     return await this.r6Api.getStatus();
   }
 
-  async getUsername(platform: string, id: string): Promise<PlayerUsername | null> {
+  async getUsername(platform: PlatformAll, id: string): Promise<PlayerUsername | null> {
     return await this.getCachedData(id, R6Collection.username, async () => {
-      return this.getFirstResult(() => this.r6Api.getUsername(platform, id));
+      return this.getFirstResult(() => this.r6Api.findById(platform, id));
     });
   }
 
-  async getAll(platform: string, username: string): Promise<PlayerDoc> {
+  async getAll(platform: Platform, username: string): Promise<PlayerDoc> {
     const id = await this.getId(platform, username);
 
     const result = await Promise.all([

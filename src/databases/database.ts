@@ -1,7 +1,7 @@
+import { IGetRanks } from 'r6api.js/dist/methods/getRanks';
+import { IGetStats } from 'r6api.js/dist/methods/getStats';
 import { PlayerLevel } from '../models/player-level';
 import { PlayerPlaytime } from '../models/player-playtime';
-import { PlayerRank } from '../models/player-rank';
-import { PlayerStats } from '../models/player-stats';
 import { PlayerUsername } from '../models/player-username';
 
 export enum R6Collection {
@@ -12,7 +12,7 @@ export enum R6Collection {
   username = 'username'
 }
 
-export type R6Class = PlayerLevel | PlayerPlaytime | PlayerRank | PlayerStats | PlayerUsername;
+export type R6Class = PlayerLevel | PlayerPlaytime | IGetRanks | IGetStats | PlayerUsername;
 
 export abstract class Database {
   abstract init(): Promise<void>;
