@@ -32,27 +32,27 @@ export class R6Service {
     private readonly options?: R6ServiceOptions
   ) {
     this.setOptions();
-    
+
     this.r6Api = new R6API({
-      email: this.email, 
+      email: this.email,
       password: this.password
     });
   }
 
   private setOptions() {
-    if(this.options?.caching != null) {
+    if (this.options?.caching != null) {
       this.caching = this.options.caching;
     }
 
-    if(this.options?.expiration != null) {
+    if (this.options?.expiration != null) {
       this.expiration = this.options.expiration;
     }
 
-    if(this.options?.cacheService != null) {
+    if (this.options?.cacheService != null) {
       this.cacheService = this.options.cacheService;
     }
 
-    if(this.options?.database != null) {
+    if (this.options?.database != null) {
       this.database = this.options.database;
     }
   }
@@ -64,7 +64,7 @@ export class R6Service {
       !this.database.isOnline()) {
       return await getData();
     }
-    
+
     // create a cache id for each collection of each player
     const cacheId = `${id}_${collection}`;
     const now = new Date().getTime();
@@ -81,6 +81,9 @@ export class R6Service {
 
     // caching if data is expired or not in the database
     let data = await getData();
+    if (!data) {
+      return data;
+    }
     if (cachedTimestamp == -1) {
       await this.database.insert(collection, data);
     } else {
@@ -91,12 +94,17 @@ export class R6Service {
   }
 
   private async getFirstResult<T>(getData: () => Promise<any | null>): Promise<T> {
-    const result = await getData();
-    return result.length > 0 ? result[0] : null;
+    try {
+      const result = await getData();
+      return result.length > 0 ? result[0] : null;
+    }
+    catch (e) {
+      return null;
+    }
   }
 
-  async getId(platform: PlatformAll, username: string): Promise<string> {
-    const getId = (): Promise<string> => this.r6Api.findByUsername(platform, username).then(el => el[0].id);
+  async getId(platform: PlatformAll, username: string): Promise<string | null> {
+    const getId = (): Promise<string | null> => this.r6Api.findByUsername(platform, username).then(el => el[0]?.id);
     if (!this.caching || !this.cacheService.isOnline()) {
       return await getId();
     }
@@ -139,7 +147,7 @@ export class R6Service {
       return this.getFirstResult(() => this.r6Api.getRanks(platform, id, {
         seasonIds: 'all',
         boardIds: 'pvp_ranked',
-        regionIds: ['emea']
+        regionIds: 'all',
       }));
     });
   }
@@ -149,19 +157,31 @@ export class R6Service {
     return await this.getRankById(platform, id);
   }
 
-  async getStatsById(platform: Platform, id: string): Promise<IGetStats> {
+  async getStatsById(platform: Platform, id: string): Promise<IGetStats | null> {
     return await this.getCachedData(id, R6Collection.stats, async () => {
-      return this.r6Api.getStats(platform, id).then(el => el[0])
+      try {
+        const result = await this.r6Api.getStats(platform, id);
+        if (result) {
+          return result[0];
+        }
+      }
+      catch (e) { }
+      return null;
     });
   }
 
-  async getStatsByUsername(platform: Platform, username: string): Promise<IGetStats> {
+  async getStatsByUsername(platform: Platform, username: string): Promise<IGetStats | null> {
     const id = await this.getId(platform, username);
     return await this.getStatsById(platform, id);
   }
 
-  async getServersStatus(): Promise<ServerStatus[]> {
-    return await this.r6Api.getStatus();
+  async getServersStatus(): Promise<ServerStatus[] | null> {
+    try {
+      return await this.r6Api.getStatus();
+    }
+    catch (e) {
+      return null;
+    }
   }
 
   async getUsername(platform: PlatformAll, id: string): Promise<PlayerUsername | null> {
@@ -170,7 +190,7 @@ export class R6Service {
     });
   }
 
-  async getAll(platform: Platform, username: string): Promise<PlayerDoc> {
+  async getAll(platform: Platform, username: string): Promise<PlayerDoc | null> {
     const id = await this.getId(platform, username);
 
     const result = await Promise.all([
@@ -178,16 +198,20 @@ export class R6Service {
       this.getPlaytimeById(platform, id),
       this.getRankById(platform, id),
       this.getStatsById(platform, id),
-      this.getUsername(platform, id)
+      this.getUsername(platform, id),
     ]);
 
-    return {
-      player: username,
-      level: result[0],
-      playtime: result[1],
-      rank: result[2],
-      stats: result[3],
-      username: result[4]
+    if (result.every((val) => val != null)) {
+      return {
+        player: username,
+        level: result[0],
+        playtime: result[1],
+        rank: result[2],
+        stats: result[3],
+        username: result[4],
+      }
     }
+
+    return null;
   }
 }
