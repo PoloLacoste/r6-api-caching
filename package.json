@@ -1,6 +1,6 @@
 {
   "name": "r6-api-caching",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Rainbow Six Siege data caching",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
