@@ -44,8 +44,8 @@ export class MongoDatabase extends Database {
     await Promise.all(indexes);
   }
 
-  private getCollection(name: R6Collection): Collection {
-    return this.db.collection(name.toString());
+  private getCollection(name: R6Collection): Collection<R6Class> {
+    return this.db.collection<R6Class>(name.toString());
   }
 
   async get(name: R6Collection, id: string): Promise<R6Class | null> {
