@@ -1,0 +1,20 @@
+version: '3.3'
+
+services:
+  mongo:
+    image: mongo:5.0.8-focal
+    container_name: mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: r6
+    ports:
+      - 27017:27017
+  
+  redis:
+    image: redis:7.0.0-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379

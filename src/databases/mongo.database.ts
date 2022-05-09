@@ -15,7 +15,6 @@ export class MongoDatabase extends Database {
     private readonly url: string
   ) {
     super();
-    this.init();
   }
 
   async init(): Promise<void> {
@@ -24,7 +23,7 @@ export class MongoDatabase extends Database {
         connectTimeoutMS: 4000,
       });
 
-      this.initDb();
+      await this.initDb();
     }
     catch(e) {
       this.online = false;

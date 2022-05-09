@@ -57,6 +57,13 @@ export class R6Service {
     }
   }
 
+  public async init() {
+    if (this.caching) {
+      await this.database?.init();
+      await this.cacheService?.init();
+    }
+  }
+
   private async getCachedData(id: string, collection: R6Collection,
     getData: () => Promise<any | null>): Promise<any | null> {
 

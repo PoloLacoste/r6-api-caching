@@ -1,49 +1,30 @@
-const redis = require('redis');
-import { promisify } from 'util';
+import { createClient } from 'redis';
+
+const EXPIRATION = 'expiration';
+const ID = 'id';
+
 
 export class CacheService {
 
   private client: any;
-
-  private getExpirationAsync: any;
-  private setExpirationAsync: any;
-  
-  private getUsernameIdAsync: any;
-  private setUsernameIdAsync: any;
-
-  private getCustomAsync: any;
-  private setCustomAsync: any;
 
   private online = true;
 
   constructor(
     private readonly url: string
   ) {
-
-    const client = this.client = redis.createClient({
+    this.client = createClient({
       url: this.url,
-      disable_resubscribing: true
     });
+  }
+
+  public async init(): Promise<void> {
+    await this.client.connect();
 
     this.client.on('error', (error) => {
       this.online = false;
-      client.quit();
+      this.client.quit();
       console.log(`Redis: ${error}`);
-    });
-
-    this.client.select('expiration', () => {
-      this.getExpirationAsync = promisify(this.client.get).bind(this.client);
-      this.setExpirationAsync = promisify(this.client.set).bind(this.client);
-    });
-
-    this.client.select('id', () => {
-      this.getUsernameIdAsync = promisify(this.client.get).bind(this.client);
-      this.setUsernameIdAsync = promisify(this.client.set).bind(this.client);
-    });
-
-    this.client.select('custom', () => {
-      this.getCustomAsync = promisify(this.client.get).bind(this.client);
-      this.setCustomAsync = promisify(this.client.set).bind(this.client);
     });
   }
 
@@ -53,7 +34,7 @@ export class CacheService {
 
   async getExpiration(id: string): Promise<number | null> {
     try {
-      const result = await this.getExpirationAsync(id);
+      const result = await this.client.get(`${EXPIRATION}-${id}`);
       return result != null ? parseInt(result) : null;
     }
     catch(e) {
@@ -65,7 +46,7 @@ export class CacheService {
 
   async setExpiration(id: string, timestamp: number): Promise<void> {
     try {
-      await this.setExpirationAsync(id, timestamp);
+      await this.client.set(`${EXPIRATION}-${id}`, timestamp);
     }
     catch(e) {
       console.log(e);
@@ -74,7 +55,7 @@ export class CacheService {
 
   async getId(username: string): Promise<string> {
     try {
-      return this.getUsernameIdAsync(username) as string;
+      return await this.client.get(`${ID}-${username}`) as string;
     }
     catch(e) {
       console.log(e);
@@ -85,27 +66,7 @@ export class CacheService {
 
   async setId(username: string, id: string): Promise<void> {
     try {
-      await this.setUsernameIdAsync(username, id);
-    }
-    catch(e) {
-      console.log(e);
-    }
-  }
-
-  async getCustom(key: string): Promise<string> {
-    try {
-      return this.getCustomAsync(key) as string;
-    }
-    catch(e) {
-      console.log(e);
-    }
-
-    return null;
-  }
-
-  async setCustom(key: string, value: string): Promise<void> {
-    try {
-      await this.setCustomAsync(key, value);
+      await await this.client.set(`${ID}-${username}`, id);
     }
     catch(e) {
       console.log(e);
