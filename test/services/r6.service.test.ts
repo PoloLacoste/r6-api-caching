@@ -84,6 +84,11 @@ describe('R6 service', () => {
         expect(result).toBeInstanceOf(Array);
     });
 
+    it('get all', async () => {
+        const result = await service.getAll(constants.platform, constants.username);
+        expect(result.username).toBeInstanceOf(constants.username);
+    }, 10000);
+
     afterEach(async () => {
         await service.close();
     });
