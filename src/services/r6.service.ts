@@ -126,6 +126,11 @@ export class R6Service {
     return id;
   }
 
+  async getUsername(platform: PlatformAll, id: string): Promise<PlayerUsername | null> {
+    return await this.getCachedData(id, R6Collection.username, async () => {
+      return this.getFirstResult(() => this.r6Api.findById(platform, id));
+    });
+  }
 
   async getLevelById(platform: Platform, id: string): Promise<PlayerLevel | null> {
     return await this.getCachedData(id, R6Collection.level, async () => {
@@ -191,12 +196,6 @@ export class R6Service {
     }
   }
 
-  async getUsername(platform: PlatformAll, id: string): Promise<PlayerUsername | null> {
-    return await this.getCachedData(id, R6Collection.username, async () => {
-      return this.getFirstResult(() => this.r6Api.findById(platform, id));
-    });
-  }
-
   async getAll(platform: Platform, username: string): Promise<PlayerDoc | null> {
     const id = await this.getId(platform, username);
 
@@ -220,5 +219,10 @@ export class R6Service {
     }
 
     return null;
+  }
+
+  async close(): Promise<void> {
+    await this.database?.init();
+    await this.cacheService?.init();
   }
 }

@@ -1,32 +1,37 @@
 {
   "name": "r6-api-caching",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Rainbow Six Siege data caching",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "start": "tsc && node dist/index",
-    "build": "tsc",
-    "prepublish": "tsc"
+  "author": "PoloLacoste",
+  "license": "MIT",
+  "homepage": "https://github.com/PoloLacoste/r6-api-caching#readme",
+  "bugs": {
+    "url": "https://github.com/PoloLacoste/r6-api-caching/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PoloLacoste/r6-api-caching.git"
   },
-  "author": "PoloLacoste",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/PoloLacoste/r6-api-caching/issues"
+  "scripts": {
+    "start": "tsc && node dist/index",
+    "build": "tsc",
+    "test": "jest --force-exit"
   },
-  "homepage": "https://github.com/PoloLacoste/r6-api-caching#readme",
   "devDependencies": {
+    "@types/jest": "^28.1.7",
     "@types/node": "^17.0.31",
+    "dotenv": "^16.0.1",
+    "jest": "^28.1.3",
+    "ts-jest": "^28.0.8",
+    "ts-node": "^10.9.1",
     "typescript": "^4.6.4"
   },
   "dependencies": {
     "class-validator": "^0.13.2",
     "mongodb": "^4.5.0",
-    "r6api.js": "^4.1.0",
+    "r6api.js": "^4.3.0",
     "redis": "^4.1.0"
   }
 }
