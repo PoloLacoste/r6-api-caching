@@ -59,7 +59,7 @@ describe('R6 service', () => {
         expect(result.seasons[24].seasonName).toBe(constants.seasonName);
         expect(result.seasons[24].regions.emea.boards.pvp_ranked.current.mmr).toBe(constants.seasonCurrentMMR);
         expect(result.seasons[24].regions.emea.boards.pvp_ranked.kills).toBe(constants.seasonKills);
-    }, 10000);
+    }, 20000);
 
     it('get rank by username', async () => {
         const result = await service.getRankByUsername(constants.platform, constants.username);
@@ -67,17 +67,17 @@ describe('R6 service', () => {
         expect(result.seasons[24].seasonName).toBe(constants.seasonName);
         expect(result.seasons[24].regions.emea.boards.pvp_ranked.current.mmr).toBe(constants.seasonCurrentMMR);
         expect(result.seasons[24].regions.emea.boards.pvp_ranked.kills).toBe(constants.seasonKills);
-    }, 10000);
+    }, 20000);
 
     it('get stats by id', async () => {
         const result = await service.getStatsById(constants.platform, constants.userId);
         expect(result.id).toBe(constants.userId);
-    }, 10000);
+    }, 20000);
 
     it('get stats by username', async () => {
         const result = await service.getStatsByUsername(constants.platform, constants.username);
         expect(result.id).toBe(constants.userId);
-    }, 10000);
+    }, 20000);
 
     it('get server status', async () => {
         const result = await service.getServersStatus();
@@ -87,7 +87,7 @@ describe('R6 service', () => {
     it('get all', async () => {
         const result = await service.getAll(constants.platform, constants.username);
         expect(result.username.username).toBe(constants.username);
-    }, 10000);
+    }, 20000);
 
     afterEach(async () => {
         await service.close();
