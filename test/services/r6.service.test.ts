@@ -59,7 +59,7 @@ describe('R6 service', () => {
         expect(result.seasons[24].seasonName).toBe(constants.seasonName);
         expect(result.seasons[24].regions.emea.boards.pvp_ranked.current.mmr).toBe(constants.seasonCurrentMMR);
         expect(result.seasons[24].regions.emea.boards.pvp_ranked.kills).toBe(constants.seasonKills);
-    }, 20000);
+    }, 15000);
 
     it('get rank by username', async () => {
         const result = await service.getRankByUsername(constants.platform, constants.username);
@@ -67,7 +67,7 @@ describe('R6 service', () => {
         expect(result.seasons[24].seasonName).toBe(constants.seasonName);
         expect(result.seasons[24].regions.emea.boards.pvp_ranked.current.mmr).toBe(constants.seasonCurrentMMR);
         expect(result.seasons[24].regions.emea.boards.pvp_ranked.kills).toBe(constants.seasonKills);
-    }, 20000);
+    }, 15000);
 
     it('get stats by id', async () => {
         const result = await service.getStatsById(constants.platform, constants.userId);
