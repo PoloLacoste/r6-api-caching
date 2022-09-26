@@ -10,7 +10,7 @@ Simple cacher around [r6api.js](https://github.com/danielwerg/r6api.js) using re
 npm install r6-api-caching
 ```
 
-## Setup
+## Usage
 
 ```typescript
 import { R6Service } from 'r6-api-caching';
@@ -53,4 +53,13 @@ console.log(`Player id : ${id}`);
 
 ```
 Player id : be3313d6-d443-4eae-818f-bb7f56837781
+```
+
+## Dev
+
+Create a `.env` file to start the tests.
+
+```ini
+EMAIL=[UBISOFT ACCOUNT EMAIL]
+PASSWORD=[UBISOFT ACCOUNT PASSWORD]
 ```
