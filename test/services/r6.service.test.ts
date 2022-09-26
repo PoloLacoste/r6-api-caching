@@ -92,8 +92,4 @@ describe('R6 service', () => {
         const result = await service.getAll(constants.platform, constants.username);
         expect(result?.username.username).toBe(constants.username);
     }, 20000);
-
-    afterEach(async () => {
-        await service.close();
-    });
 });

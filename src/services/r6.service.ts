@@ -220,9 +220,4 @@ export class R6Service {
 
     return null;
   }
-
-  async close(): Promise<void> {
-    await this.database?.init();
-    await this.cacheService?.init();
-  }
 }
